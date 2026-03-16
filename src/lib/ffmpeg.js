@@ -26,12 +26,19 @@ export async function convertFile(file, outputFormat, onProgress) {
 	const inputName = `input.${getExtension(file.name)}`
 	const outputName = `output.${outputFormat}`
 
-	ffmpeg.on('progress', ({ progress }) => {
-		if (onProgress) onProgress(Math.round(progress * 100))
-	})
+	function handleProgress({ progress }) {
+		if (onProgress) {
+			onProgress(Math.min(100, Math.max(0, Math.round(progress * 100))))
+		}
+	}
+
+	ffmpeg.off('progress', handleProgress)
+	ffmpeg.on('progress', handleProgress)
 
 	await ffmpeg.writeFile(inputName, await fetchFile(file))
 	await ffmpeg.exec(buildCommand(inputName, outputName, outputFormat))
+
+	ffmpeg.off('progress', handleProgress)
 
 	const data = await ffmpeg.readFile(outputName)
 
@@ -59,15 +66,85 @@ function getMimeType(format) {
 	return types[format] ?? 'application/octet-stream'
 }
 
+// Containers that typically carry H.264/H.265 video + AAC audio.
+// Converting between these can be done by remuxing (-c copy) with
+// no re-encoding — identical quality, near-instant speed.
+const H26X_CONTAINERS = new Set(['mp4', 'mkv', 'mov'])
+
+// AVI can carry many codecs but generally works with -c copy from H.264 sources
+const COPY_COMPATIBLE = new Set([...H26X_CONTAINERS, 'avi'])
+
+// WebM requires VP8/VP9 video + Opus/Vorbis audio — always needs re-encoding
+// from H.264 sources, and vice-versa.
+
+const threads = Math.min(navigator.hardwareConcurrency ?? 4, 8)
+
+function canRemux(inputExt, outputFormat) {
+	// Same format — always remux
+	if (inputExt === outputFormat) return true
+
+	// Both containers support the same codec families — remux
+	if (COPY_COMPATIBLE.has(inputExt) && COPY_COMPATIBLE.has(outputFormat)) return true
+
+	// WebM ↔ WebM is fine
+	if (inputExt === 'webm' && outputFormat === 'webm') return true
+
+	return false
+}
+
 function buildCommand(input, output, format) {
+	const inputExt = getExtension(input)
 	const audioFormats = ['mp3', 'wav', 'aac']
 	const isAudioOutput = audioFormats.includes(format)
 
 	if (isAudioOutput) {
-		// Extract audio
-		return ['-i', input, '-vn', output]
+		if (format === 'aac') {
+			// AAC extraction — copy if source likely has AAC audio (mp4/mkv/mov)
+			if (H26X_CONTAINERS.has(inputExt)) {
+				return ['-i', input, '-vn', '-c:a', 'copy', output]
+			}
+			return ['-i', input, '-vn', '-threads', String(threads), output]
+		}
+		// MP3 / WAV — must re-encode but no video processing needed
+		return ['-i', input, '-vn', '-threads', String(threads), output]
 	}
 
-	// Video conversion — reasonable defaults
-	return ['-i', input, output]
+	// Video → Video
+	if (canRemux(inputExt, format)) {
+		// Remux: copy all streams, no re-encoding, identical quality, near-instant
+		return ['-i', input, '-c', 'copy', output]
+	}
+
+	// Must re-encode (e.g. MP4 → WebM or WebM → MP4)
+	// Use high-quality settings that preserve source quality
+	if (format === 'webm') {
+		// VP8 with CRF 10 (near-lossless) + Vorbis audio at high bitrate
+		return [
+			'-i', input,
+			'-c:v', 'libvpx',
+			'-crf', '10',
+			'-b:v', '0',
+			'-c:a', 'libvorbis',
+			'-q:a', '6',
+			'-threads', String(threads),
+			output,
+		]
+	}
+
+	if (inputExt === 'webm' && H26X_CONTAINERS.has(format)) {
+		// WebM → MP4/MKV/MOV: re-encode to H.264 with CRF 18 (visually lossless)
+		return [
+			'-i', input,
+			'-c:v', 'libx264',
+			'-crf', '18',
+			'-preset', 'fast',
+			'-c:a', 'aac',
+			'-b:a', '192k',
+			'-threads', String(threads),
+			output,
+		]
+	}
+
+	// Fallback: re-encode with quality-preserving defaults
+	return ['-i', input, '-threads', String(threads), output]
 }
