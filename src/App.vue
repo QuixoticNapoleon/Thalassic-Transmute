@@ -14,7 +14,7 @@ const activeTab = ref('media')
 			<!-- Header -->
 			<div>
 				<h1 class="text-3xl font-bold text-teal-400 tracking-tight">Thalassic Convert</h1>
-				<p class="text-gray-400 text-sm mt-1">Browser-based media converter. Your files never leave your device.</p>
+				<p class="text-gray-400 text-sm mt-1">Private browser-based media converter. Your files never leave your device!</p>
 			</div>
 
 			<!-- Tab bar -->

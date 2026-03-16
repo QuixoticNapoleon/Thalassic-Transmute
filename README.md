@@ -1,9 +1,13 @@
 # Thalassic Convert
 
-No-nonsense media converter. Runs entirely in your browser — no uploads, no servers, no accounts.
+No-nonsense private media and document converter. Runs entirely in your browser — no uploads, no servers, no accounts.
 
-Drop a file, pick a format, download the result. Supports single and bulk conversion.
+Drop files, pick a format, download the result. Supports bulk conversion.
 
-**Supported formats:** MP4, WebM, AVI, MOV, MKV, MP3, WAV, AAC
+**Video & Audio:** MP4, WebM, AVI, MOV, MKV, MP3, WAV, AAC
 
-Powered by [ffmpeg.wasm](https://github.com/ffmpegwasm/ffmpeg.wasm).
+**Images:** PNG, JPG, WebP, BMP, TIFF
+
+**Documents:** Markdown, HTML, Plain Text, LaTeX, RST, DOCX, ODT, EPUB, PDF
+
+Powered by [ffmpeg.wasm](https://github.com/ffmpegwasm/ffmpeg.wasm) and [pandoc-wasm](https://github.com/haskell-wasm/pandoc-wasm).
