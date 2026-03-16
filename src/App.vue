@@ -36,7 +36,7 @@ function formatFileSize(bytes) {
 
 			<!-- Header -->
 			<div>
-				<h1 class="text-3xl font-bold text-teal-400 tracking-tight">Atlassic Convert</h1>
+				<h1 class="text-3xl font-bold text-teal-400 tracking-tight">Thalassic Convert</h1>
 				<p class="text-gray-400 text-sm mt-1">Browser-based video &amp; audio converter. Your files never leave your device.</p>
 			</div>
 

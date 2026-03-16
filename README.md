@@ -1,4 +1,4 @@
-# Atlassic Convert
+# Thalassic Convert
 
 No-nonsense media converter. Runs entirely in your browser — no uploads, no servers, no accounts.
 
