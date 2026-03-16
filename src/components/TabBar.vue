@@ -34,11 +34,11 @@ onMounted(() => nextTick(updateSlider))
 <template>
 	<div
 		ref="containerRef"
-		class="relative flex w-fit p-1 bg-gray-900 rounded-xl border border-gray-800 transition-colors duration-200 hover:border-gray-600"
+		class="relative flex w-fit p-1 rounded-xl border border-gray-800 bg-gradient-to-r from-teal-950/80 via-cyan-950/70 to-teal-900/80 transition-colors duration-200 hover:from-teal-900/80 hover:via-cyan-900/70 hover:to-teal-800/80 hover:border-gray-600"
 	>
 		<!-- Sliding background pill -->
 		<div
-			class="absolute rounded-lg bg-teal-600"
+			class="absolute rounded-lg bg-teal-400/95 shadow-[0_0_18px_rgba(45,212,191,0.35)]"
 			:class="ready ? 'transition-all duration-300 ease-in-out' : ''"
 			:style="{
 				top: '4px',
