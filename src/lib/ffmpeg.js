@@ -72,6 +72,7 @@ function getMimeType(format) {
 }
 
 const IMAGE_FORMATS = new Set(['png', 'jpg', 'jpeg', 'webp', 'bmp', 'tiff', 'tif', 'gif'])
+const AUDIO_FORMATS = new Set(['mp3', 'wav', 'aac', 'ogg', 'flac', 'wma', 'm4a', 'opus'])
 
 // Containers that typically carry H.264/H.265 video + AAC audio.
 // Converting between these can be done by remuxing (-c copy) with
@@ -103,17 +104,31 @@ function buildCommand(input, output, format) {
 	const inputExt = getExtension(input)
 	const isImageInput = IMAGE_FORMATS.has(inputExt)
 	const isImageOutput = IMAGE_FORMATS.has(format)
+	const isAudioInput = AUDIO_FORMATS.has(inputExt)
+	const videoFormats = ['mp4', 'webm', 'avi', 'mov', 'mkv']
 	const audioFormats = ['mp3', 'wav', 'aac']
 	const isAudioOutput = audioFormats.includes(format)
+	const isVideoOutput = videoFormats.includes(format)
 
-	// Image → Image: straightforward, ffmpeg handles it natively
+	// Image → Image
 	if (isImageInput && isImageOutput) {
 		return ['-i', input, output]
 	}
 
-	// Video → Image: extract first frame
-	if (!isImageInput && isImageOutput) {
-		return ['-i', input, '-frames:v', '1', output]
+	// Audio → Video (generate black screen with audio track)
+	if (isAudioInput && isVideoOutput) {
+		return [
+			'-f', 'lavfi', '-i', 'color=c=black:s=1280x720:r=1',
+			'-i', input,
+			'-c:v', 'libx264',
+			'-crf', '28',
+			'-preset', 'ultrafast',
+			'-shortest',
+			'-c:a', 'aac',
+			'-b:a', '192k',
+			'-threads', String(threads),
+			output,
+		]
 	}
 
 	if (isAudioOutput) {

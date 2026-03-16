@@ -1,18 +1,32 @@
 <script setup>
-import { FORMATS } from '../composables/useConverter.js'
+import { computed } from 'vue'
+
+const props = defineProps({
+	availableFormats: { type: Object, required: true },
+})
 
 const model = defineModel({ required: true })
+
+const groups = computed(() => {
+	const result = []
+	for (const [group, formats] of Object.entries(props.availableFormats)) {
+		if (formats.length > 0) {
+			result.push({ name: group, formats })
+		}
+	}
+	return result
+})
 </script>
 
 <template>
-	<div class="flex flex-col gap-2">
+	<div class="flex flex-col gap-3">
 		<label class="text-teal-400 text-sm font-medium uppercase tracking-wider">Output format</label>
 
-		<div class="flex flex-wrap gap-2">
-			<template v-for="(formats, group) in FORMATS" :key="group">
-				<span class="text-teal-600 text-xs self-center uppercase mr-1">{{ group }}</span>
+		<div v-for="group in groups" :key="group.name" class="flex flex-col gap-2">
+			<span class="text-teal-600 text-xs uppercase tracking-wide">{{ group.name }}</span>
+			<div class="flex flex-wrap gap-2">
 				<button
-					v-for="fmt in formats"
+					v-for="fmt in group.formats"
 					:key="fmt"
 					type="button"
 					class="px-4 py-1.5 rounded-lg text-sm font-medium transition-colors border"
@@ -23,7 +37,7 @@ const model = defineModel({ required: true })
 				>
 					{{ fmt.toUpperCase() }}
 				</button>
-			</template>
+			</div>
 		</div>
 	</div>
 </template>

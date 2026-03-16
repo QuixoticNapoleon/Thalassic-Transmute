@@ -17,7 +17,8 @@ function formatFileSize(bytes) {
 		<div
 			v-for="item in queue"
 			:key="item.id"
-			class="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-gray-800"
+			class="flex items-center gap-3 px-4 py-2.5 rounded-xl"
+			:class="item.status === 'skipped' ? 'bg-gray-800/50 opacity-60' : 'bg-gray-800'"
 		>
 			<!-- Status indicator -->
 			<div class="shrink-0">
@@ -32,6 +33,10 @@ function formatFileSize(bytes) {
 				<svg v-else-if="item.status === 'done'" class="w-4 h-4 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
 				</svg>
+				<!-- Skipped -->
+				<svg v-else-if="item.status === 'skipped'" class="w-4 h-4 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+				</svg>
 				<!-- Error -->
 				<svg v-else-if="item.status === 'error'" class="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -43,8 +48,10 @@ function formatFileSize(bytes) {
 				<p class="text-sm text-white truncate">{{ item.file.name }}</p>
 				<div class="flex items-center gap-2">
 					<span class="text-xs text-gray-500">{{ formatFileSize(item.file.size) }}</span>
+					<span class="text-xs text-gray-600 capitalize">{{ item.mediaType }}</span>
 					<span v-if="item.status === 'converting'" class="text-xs text-teal-500 tabular-nums">{{ item.progress }}%</span>
 					<span v-if="item.status === 'error'" class="text-xs text-red-400">{{ item.error }}</span>
+					<span v-if="item.status === 'skipped'" class="text-xs text-yellow-500">{{ item.error }}</span>
 				</div>
 
 				<!-- Progress bar for converting items -->
@@ -69,9 +76,9 @@ function formatFileSize(bytes) {
 				</svg>
 			</a>
 
-			<!-- Remove button (only when pending and allowed) -->
+			<!-- Remove button (only when pending/skipped and allowed) -->
 			<button
-				v-if="item.status === 'pending' && canRemove"
+				v-if="(item.status === 'pending' || item.status === 'skipped') && canRemove"
 				type="button"
 				class="shrink-0 text-gray-600 hover:text-gray-300 transition-colors"
 				@click.stop="emit('remove', item.id)"
