@@ -1,5 +1,9 @@
-# Vue 3 + Vite
+# Atlassic Convert
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+No-nonsense media converter. Runs entirely in your browser — no uploads, no servers, no accounts.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+Drop a file, pick a format, download the result. Supports single and bulk conversion.
+
+**Supported formats:** MP4, WebM, AVI, MOV, MKV, MP3, WAV, AAC
+
+Powered by [ffmpeg.wasm](https://github.com/ffmpegwasm/ffmpeg.wasm).
