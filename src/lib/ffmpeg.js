@@ -62,9 +62,16 @@ function getMimeType(format) {
 		mp3: 'audio/mpeg',
 		wav: 'audio/wav',
 		aac: 'audio/aac',
+		png: 'image/png',
+		jpg: 'image/jpeg',
+		webp: 'image/webp',
+		bmp: 'image/bmp',
+		tiff: 'image/tiff',
 	}
 	return types[format] ?? 'application/octet-stream'
 }
+
+const IMAGE_FORMATS = new Set(['png', 'jpg', 'jpeg', 'webp', 'bmp', 'tiff', 'tif', 'gif'])
 
 // Containers that typically carry H.264/H.265 video + AAC audio.
 // Converting between these can be done by remuxing (-c copy) with
@@ -94,8 +101,20 @@ function canRemux(inputExt, outputFormat) {
 
 function buildCommand(input, output, format) {
 	const inputExt = getExtension(input)
+	const isImageInput = IMAGE_FORMATS.has(inputExt)
+	const isImageOutput = IMAGE_FORMATS.has(format)
 	const audioFormats = ['mp3', 'wav', 'aac']
 	const isAudioOutput = audioFormats.includes(format)
+
+	// Image → Image: straightforward, ffmpeg handles it natively
+	if (isImageInput && isImageOutput) {
+		return ['-i', input, output]
+	}
+
+	// Video → Image: extract first frame
+	if (!isImageInput && isImageOutput) {
+		return ['-i', input, '-frames:v', '1', output]
+	}
 
 	if (isAudioOutput) {
 		if (format === 'aac') {

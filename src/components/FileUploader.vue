@@ -1,26 +1,21 @@
 <script setup>
 import { ref } from 'vue'
 
-const emit = defineEmits(['file-selected'])
+const emit = defineEmits(['files-selected'])
 
 const isDragging = ref(false)
 const fileInput = ref(null)
 
-const ACCEPTED = [
-	'video/mp4', 'video/webm', 'video/x-msvideo', 'video/quicktime',
-	'video/x-matroska', 'video/avi', 'video/mov', 'video/mkv',
-	'audio/mpeg', 'audio/wav', 'audio/aac',
-]
-
 function onDrop(e) {
 	isDragging.value = false
-	const f = e.dataTransfer?.files?.[0]
-	if (f) emit('file-selected', f)
+	const files = Array.from(e.dataTransfer?.files ?? [])
+	if (files.length) emit('files-selected', files)
 }
 
 function onFileInput(e) {
-	const f = e.target.files?.[0]
-	if (f) emit('file-selected', f)
+	const files = Array.from(e.target.files ?? [])
+	if (files.length) emit('files-selected', files)
+	e.target.value = ''
 }
 
 function openPicker() {
@@ -41,7 +36,8 @@ function openPicker() {
 			ref="fileInput"
 			type="file"
 			class="hidden"
-			:accept="ACCEPTED.join(',')"
+			multiple
+			accept="video/*,audio/*,image/*"
 			@change="onFileInput"
 		/>
 
@@ -50,8 +46,8 @@ function openPicker() {
 		</svg>
 
 		<p class="text-teal-100 font-medium text-base">
-			Drop a file or <span class="text-teal-400 underline underline-offset-2">browse</span>
+			Drop files or <span class="text-teal-400 underline underline-offset-2">browse</span>
 		</p>
-		<p class="text-teal-500 text-sm">MP4, WebM, AVI, MOV, MKV, MP3, WAV, AAC</p>
+		<p class="text-teal-500 text-sm">Video, audio, or images — one or many</p>
 	</div>
 </template>
