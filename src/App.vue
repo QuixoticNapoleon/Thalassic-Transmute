@@ -29,7 +29,7 @@ const activeTab = ref('media')
 			<TabBar v-model="activeTab" />
 
 			<!-- Main card -->
-			<div class="bg-gray-900 rounded-2xl p-6 flex flex-col gap-6 border border-gray-800">
+			<div class="bg-[#0B2228] rounded-2xl p-6 flex flex-col gap-6 border border-[#1D3A42]">
 				<MediaConverter v-if="activeTab === 'media'" />
 				<DocConverter v-else-if="activeTab === 'documents'" />
 			</div>
