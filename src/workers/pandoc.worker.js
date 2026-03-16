@@ -6,7 +6,7 @@ import {
 	PreopenDirectory,
 } from '@bjorn3/browser_wasi_shim'
 
-const PANDOC_WASM_URL = 'https://tweag.github.io/pandoc-wasm/pandoc.wasm'
+const PANDOC_WASM_URL = '/pandoc.wasm'
 
 let instance = null
 let inFile = null
@@ -36,8 +36,13 @@ async function loadPandoc() {
 
 	const wasi = new WASI(args, [], fds, { debug: false })
 
+	const response = await fetch(PANDOC_WASM_URL)
+	if (!response.ok) {
+		throw new Error(`Failed to fetch pandoc.wasm: ${response.status} ${response.statusText}`)
+	}
+
 	const result = await WebAssembly.instantiateStreaming(
-		fetch(PANDOC_WASM_URL),
+		response,
 		{ wasi_snapshot_preview1: wasi.wasiImport }
 	)
 

@@ -34,7 +34,7 @@ onMounted(() => nextTick(updateSlider))
 <template>
 	<div
 		ref="containerRef"
-		class="relative flex w-fit p-1 bg-gray-900 rounded-xl border border-gray-800"
+		class="relative flex w-fit p-1 bg-gray-900 rounded-xl border border-gray-800 transition-colors duration-200 hover:border-gray-600"
 	>
 		<!-- Sliding background pill -->
 		<div
