@@ -195,6 +195,18 @@ export function useConverter() {
 		}
 	}
 
+	function downloadAll() {
+		const done = queue.filter(item => item.status === 'done' && item.downloadURL)
+		done.forEach((item, i) => {
+			setTimeout(() => {
+				const a = document.createElement('a')
+				a.href = item.downloadURL
+				a.download = item.outputFilename
+				a.click()
+			}, i * 200)
+		})
+	}
+
 	return {
 		queue,
 		outputFormat,
@@ -213,6 +225,7 @@ export function useConverter() {
 		removeFile,
 		reset,
 		convert,
+		downloadAll,
 		FORMATS,
 	}
 }
