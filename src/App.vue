@@ -20,7 +20,7 @@ const activeTab = ref('media')
 					class="text-3xl font-bold text-teal-300 tracking-tight"
 					style="text-shadow: 0 0 6px rgba(45, 212, 191, 0.38), 0 0 14px rgba(34, 211, 238, 0.18);"
 				>
-					Thalassic Convert
+					Thalassic Transmute
 				</h1>
 				<p class="text-gray-400 text-sm mt-1">Private browser-based media converter. Your files never leave your device!</p>
 			</div>

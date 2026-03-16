@@ -1,4 +1,4 @@
-# Thalassic Convert
+# Thalassic Transmute
 
 No-nonsense private media and document converter. Runs entirely in your browser — no uploads, no servers, no accounts.
 
