@@ -11,7 +11,7 @@ const ALL_FORMATS = Object.values(FORMATS).flat()
 
 const VIDEO_EXTS = new Set(['mp4', 'webm', 'avi', 'mov', 'mkv', 'm4v', 'flv', 'wmv', 'mpeg', 'mpg', '3gp'])
 const AUDIO_EXTS = new Set(['mp3', 'wav', 'aac', 'ogg', 'flac', 'wma', 'm4a', 'opus'])
-const IMAGE_EXTS = new Set(['png', 'jpg', 'jpeg', 'webp', 'bmp', 'tiff', 'tif', 'gif'])
+const IMAGE_EXTS = new Set(['png', 'jpg', 'jpeg', 'webp', 'bmp', 'tiff', 'tif', 'gif', 'heif', 'heic'])
 
 // Conversion compatibility:
 // video → video, audio

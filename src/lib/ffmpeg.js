@@ -67,11 +67,13 @@ function getMimeType(format) {
 		webp: 'image/webp',
 		bmp: 'image/bmp',
 		tiff: 'image/tiff',
+		heif: 'image/heif',
+		heic: 'image/heic',
 	}
 	return types[format] ?? 'application/octet-stream'
 }
 
-const IMAGE_FORMATS = new Set(['png', 'jpg', 'jpeg', 'webp', 'bmp', 'tiff', 'tif', 'gif'])
+const IMAGE_FORMATS = new Set(['png', 'jpg', 'jpeg', 'webp', 'bmp', 'tiff', 'tif', 'gif', 'heif', 'heic'])
 const AUDIO_FORMATS = new Set(['mp3', 'wav', 'aac', 'ogg', 'flac', 'wma', 'm4a', 'opus'])
 
 // Containers that typically carry H.264/H.265 video + AAC audio.
